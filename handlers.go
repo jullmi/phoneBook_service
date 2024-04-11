@@ -51,12 +51,77 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving:", r.URL.Path, "from", r.Host)
 	w.WriteHeader(http.StatusOK)
 	Body := list()
-	fmt.Fprintln(w, "%s", Body)
+	fmt.Fprintf(w, "%s", Body)
 }
 
 func statusHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving: ", r.URL.Path, r.Host)
 	w.WriteHeader(http.StatusOK)
-	Body:= fmt.Sprintf("Total entries: %d\n", len(data))
-	fmt.Fprintln(w, "%s", Body)
+	Body := fmt.Sprintf("Total entries: %d\n", len(data))
+	fmt.Fprintf(w, "%s", Body)
+}
+
+func insertHandler(w http.ResponseWriter, r http.Request) {
+	paramStr := strings.Split(r.URL.Path, "/")
+	fmt.Println("Path:", paramStr)
+
+	if len(paramStr) < 5 {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "Not enough arguments"+r.URL.Path)
+		return
+	}
+
+	name := paramStr[2]
+	surname := paramStr[3]
+	tel := paramStr[4]
+
+	t := strings.ReplaceAll(tel, "-", "")
+	if !matchTel(t) {
+		fmt.Println("not a valid phone number:", t)
+		return
+	}
+
+	temp := Entry{Name: name, Surname: surname, Tel: t}
+	err := insert(&temp)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotModified)
+		Body := "Failed to add record\n"
+		fmt.Fprintf(w, "%s", Body)
+	} else {
+		log.Println("Serving:", r.URL.Path, "from", r.Host)
+		w.WriteHeader(http.StatusOK)
+		Body := "New record added successfully\n"
+		fmt.Fprintf(w, "%s", Body)
+	}
+	log.Println("Serving: ", r.URL.Path, "from", r.Host)
+
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	paramStr := strings.Split(r.URL.Path, "/")
+	fmt.Println("Path:", paramStr)
+
+	if len(paramStr) < 3 {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "Not found: "+r.URL.Path)
+		return
+	}
+
+	var Body string
+	tel := paramStr[2]
+
+	t := search(tel)
+
+	if t == nil {
+		w.WriteHeader(http.StatusNotFound)
+		Body = "Could not be found:" + tel + "\n"
+	} else {
+		w.WriteHeader(http.StatusOK)
+		Body = fmt.Sprintf("%s, %s, %s", t.Name, t.Surname, t.Tel)
+	}
+
+	fmt.Println("Serving:", r.URL.Path, "from", r.Host)
+	fmt.Fprintf(w, "%s", Body)
+
 }
