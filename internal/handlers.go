@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"fmt"
@@ -9,14 +9,14 @@ import (
 
 const PORT = ":1234"
 
-func defaultHandler(w http.ResponseWriter, r *http.Request) {
+func DefaultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving:", r.URL.Path, r.Host)
 	w.WriteHeader(http.StatusOK)
 	Body := "Thanks for visiting!\n"
 	fmt.Fprintf(w, "%s", Body)
 }
 
-func deleteHandler(w http.ResponseWriter, r *http.Request) {
+func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	// Get telephone
 	paramStr := strings.Split(r.URL.Path, "/")
 
@@ -47,21 +47,21 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func listHandler(w http.ResponseWriter, r *http.Request) {
+func ListHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving:", r.URL.Path, "from", r.Host)
 	w.WriteHeader(http.StatusOK)
 	Body := list()
 	fmt.Fprintf(w, "%s", Body)
 }
 
-func statusHandler(w http.ResponseWriter, r *http.Request) {
+func StatusHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving: ", r.URL.Path, r.Host)
 	w.WriteHeader(http.StatusOK)
-	Body := fmt.Sprintf("Total entries: %d\n", len(data))
+	Body := fmt.Sprintf("Total entries: %d\n", len(Data))
 	fmt.Fprintf(w, "%s", Body)
 }
 
-func insertHandler(w http.ResponseWriter, r http.Request) {
+func InsertHandler(w http.ResponseWriter, r *http.Request) {
 	paramStr := strings.Split(r.URL.Path, "/")
 	fmt.Println("Path:", paramStr)
 
@@ -76,7 +76,7 @@ func insertHandler(w http.ResponseWriter, r http.Request) {
 	tel := paramStr[4]
 
 	t := strings.ReplaceAll(tel, "-", "")
-	if !matchTel(t) {
+	if !MatchTel(t) {
 		fmt.Println("not a valid phone number:", t)
 		return
 	}
@@ -98,7 +98,7 @@ func insertHandler(w http.ResponseWriter, r http.Request) {
 
 }
 
-func searchHandler(w http.ResponseWriter, r *http.Request) {
+func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	paramStr := strings.Split(r.URL.Path, "/")
 	fmt.Println("Path:", paramStr)
 

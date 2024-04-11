@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"strconv"
@@ -14,7 +14,7 @@ type Entry struct {
 
 // Initialized by the user – returns a pointer
 // If it returns nil, there was an error
-func initEntry(N, S, T string) *Entry {
+func InitEntry(N, S, T string) *Entry {
 	// Both of them should have a value
 	if T == "" || S == "" {
 		return nil
@@ -24,9 +24,9 @@ func initEntry(N, S, T string) *Entry {
 	return &Entry{Name: N, Surname: S, Tel: T, LastAccess: LastAccess}
 }
 
-var CSVPATH = "./data.csv"
+var CSVPATH = "./../data.csv"
 
 type PhoneBook []Entry
 
-var data = PhoneBook{}
-var index map[string]int
+var Data = PhoneBook{}
+var Index map[string]int

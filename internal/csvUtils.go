@@ -1,11 +1,11 @@
-package main
+package internal
 
 import (
 	"encoding/csv"
 	"os"
 )
 
-func readCSVFile(filepath string) error {
+func ReadCSVFile(filepath string) error {
 	_, err := os.Stat(filepath)
 	if err != nil {
 		return err
@@ -31,13 +31,13 @@ func readCSVFile(filepath string) error {
 			LastAccess: line[3],
 		}
 		// Storing to global variable
-		data = append(data, temp)
+		Data = append(Data, temp)
 	}
 
 	return nil
 }
 
-func saveCSVFile(filepath string) error {
+func SaveCSVFile(filepath string) error {
 	csvfile, err := os.Create(filepath)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func saveCSVFile(filepath string) error {
 	defer csvfile.Close()
 
 	csvwriter := csv.NewWriter(csvfile)
-	for _, row := range data {
+	for _, row := range Data {
 		temp := []string{row.Name, row.Surname, row.Tel, row.LastAccess}
 		_ = csvwriter.Write(temp)
 	}

@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"fmt"
@@ -8,17 +8,17 @@ import (
 
 func insert(pS *Entry) error {
 	// If it already exists, do not add it
-	_, ok := index[(*pS).Tel]
+	_, ok := Index[(*pS).Tel]
 	if ok {
 		return fmt.Errorf("%s already exists", pS.Tel)
 	}
 
 	*&pS.LastAccess = strconv.FormatInt(time.Now().Unix(), 10)
-	data = append(data, *pS)
+	Data = append(Data, *pS)
 	// Update the index
-	_ = createIndex()
+	_ = CreateIndex()
 
-	err := saveCSVFile(CSVPATH)
+	err := SaveCSVFile(CSVPATH)
 	if err != nil {
 		return err
 	}
@@ -26,15 +26,15 @@ func insert(pS *Entry) error {
 }
 
 func deleteEntry(key string) error {
-	i, ok := index[key]
+	i, ok := Index[key]
 	if !ok {
 		return fmt.Errorf("%s cannot be found!", key)
 	}
-	data = append(data[:i], data[i+1:]...)
+	Data = append(Data[:i], Data[i+1:]...)
 	// Update the index - key does not exist any more
-	delete(index, key)
+	delete(Index, key)
 
-	err := saveCSVFile(CSVPATH)
+	err := SaveCSVFile(CSVPATH)
 	if err != nil {
 		return err
 	}
@@ -42,19 +42,19 @@ func deleteEntry(key string) error {
 }
 
 func search(key string) *Entry {
-	i, ok := index[key]
+	i, ok := Index[key]
 	if !ok {
 		return nil
 	}
-	data[i].LastAccess = strconv.FormatInt(time.Now().Unix(), 10)
-	return &data[i]
+	Data[i].LastAccess = strconv.FormatInt(time.Now().Unix(), 10)
+	return &Data[i]
 }
 
 
 
 func list() string {
 	var all string
-	for _, k := range data {
+	for _, k := range Data {
 		all = all + k.Name + " " + k.Surname + " " + k.Tel + "\n"
 	}
 	return all
